@@ -10,6 +10,7 @@ import { NotificationProvider } from './context/NotificationContext';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import InstallAppPrompt from './components/InstallAppPrompt';
 
 // Customer Pages
 import Home from './pages/Home';
@@ -44,6 +45,7 @@ function CustomerLayout() {
         <Outlet />
       </main>
       <Footer />
+      <InstallAppPrompt />
     </div>
   );
 }
