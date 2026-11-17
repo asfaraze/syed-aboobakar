@@ -1,25 +1,23 @@
 {
+  "id": "/",
   "short_name": "Syed Aboobakar",
   "name": "Syed Aboobakar Kedai - Grocery Shopping",
-  "description": "Malaysian Grocery E-Commerce Platform - Online Ordering with In-Store Pickup",
+  "description": "Order groceries online from Syed Aboobakar Kedai and pick them up in store.",
   "icons": [
-    {
-      "src": "/icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
+    { "src": "/icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
   ],
   "start_url": "/",
+  "scope": "/",
   "background_color": "#ffffff",
   "theme_color": "#1e40af",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "categories": ["shopping", "food", "lifestyle"]
+  "categories": ["shopping", "food", "lifestyle"],
+  "shortcuts": [
+    { "name": "Shop products", "url": "/products", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "My cart", "url": "/cart", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Track order", "url": "/track", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
 }

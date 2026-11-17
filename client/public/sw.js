@@ -1,48 +1,59 @@
 // Service Worker for Syed Aboobakar Kedai PWA
-const CACHE_NAME = 'sak-grocery-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json'
-];
+const CACHE_NAME = 'sak-grocery-v2';
+const APP_SHELL = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Let API requests go directly to network
-  if (event.request.url.includes('/api/')) {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  if (request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) {
     return;
   }
+
+  // Pages: network first so customers always get the latest store, with offline fallback.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', copy));
+          return response;
+        })
+        .catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // Static assets: cache first, then network.
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
-    })
+    caches.match(request).then(
+      (cached) =>
+        cached ||
+        fetch(request).then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+    )
   );
 });
 
-// Push notification event listener
 self.addEventListener('push', (event) => {
   let data = { title: 'Syed Aboobakar Kedai', body: 'New order update available.' };
   if (event.data) {
@@ -53,22 +64,18 @@ self.addEventListener('push', (event) => {
     }
   }
 
-  const options = {
-    body: data.body || data.message,
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
-    vibrate: [100, 50, 100],
-    data: {
-      url: data.url || '/'
-    }
-  };
-
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body || data.message,
+      icon: '/icon-192.png',
+      badge: '/favicon-32.png',
+      vibrate: [100, 50, 100],
+      data: { url: data.url || '/' },
+    })
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
-  );
+  event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
 });
