@@ -1,0 +1,25 @@
+{
+  "short_name": "Syed Aboobakar",
+  "name": "Syed Aboobakar Kedai - Grocery Shopping",
+  "description": "Malaysian Grocery E-Commerce Platform - Online Ordering with In-Store Pickup",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "food", "lifestyle"]
+}
