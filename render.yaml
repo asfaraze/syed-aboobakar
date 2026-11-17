@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: syed-aboobakar-kedai
+    runtime: node
+    nodeVersion: "22"
+    buildCommand: cd client && npm install && npm run build && cd ../server && npm install
+    startCommand: node server/src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        value: https://syed-aboobakar-kedai.onrender.com
+      - key: DATABASE_PATH
+        value: /data/grocery.db
+      - key: BILLPLZ_ENABLED
+        value: "false"
+      - key: SMTP_ENABLED
+        value: "false"
+    disk:
+      name: grocery-db
+      mountPath: /data
+      sizeGB: 1
